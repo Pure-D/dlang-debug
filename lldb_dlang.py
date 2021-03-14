@@ -25,7 +25,7 @@ def __lldb_init_module(debugger, dict):
 	d_category = debugger.CreateCategory('D')
 	d_category.SetEnabled(True)
 
-	attach_synthetic_to_type(DAssocArrayPrinter, r'^_AArray_|[^\d\[][^\[]*\]$', True)
+	attach_synthetic_to_type(DAssocArrayPrinter, r'^_AArray_|[^0-9\[][^\[]*\]$', True)
 
 	attach_synthetic_to_type(DArrayPrinter, r'^_Array_|\[\]$', True)
 
