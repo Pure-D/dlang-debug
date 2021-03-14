@@ -305,7 +305,7 @@ def build_pretty_printer():
 	pp.add_printer('wstring', r'^_Array_wchar_t$|^_Array_char16_t$|^wstring$|^(?:const|immutable)?\(?wchar\)?\s*\[\]$', DWStringPrinter)
 	pp.add_printer('dstring', r'^_Array_dchar$|^dstring$|^(?:const|immutable)?\(?dchar\)?\s*\[\]$', DDStringPrinter)
 	pp.add_printer('arrays', r'^_Array_|\[\]$', DArrayPrinter)
-	pp.add_printer('hashmaps', r'^_AArray_|[^\d\[][^\[]*\]$', DAssocArrayPrinter)
+	pp.add_printer('hashmaps', r'^_AArray_|[^0-9\[][^\[]*\]$', DAssocArrayPrinter)
 	return pp
 
 gdb.printing.register_pretty_printer(gdb.current_objfile(), build_pretty_printer())
