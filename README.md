@@ -10,14 +10,14 @@ TODO:
     - [ ] Windows
   - [x] Associative Arrays
   - [x] Arrays
-  - [x] Strings
+  - [x] Strings (bug: doesn't respect length, stops at null characters)
   - [ ] phobos types (tbd)
 - LLDB
   - [ ] Test on all OS
     - [x] Linux
     - [ ] OSX
     - [ ] Windows
-  - [ ] Associative Arrays (current bug: can only show first item)
+  - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
   - [ ] phobos types (tbd)

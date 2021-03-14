@@ -12,6 +12,8 @@ if sys.version_info[0] == 2:
 else:
 	to_lldb_str = str
 
+string_encoding = "escape" # remove | unicode | escape
+
 log = logging.getLogger(__name__)
 
 module = sys.modules[__name__]
@@ -193,7 +195,7 @@ class DBaseStringPrinter(DArrayPrinter):
 		if strval == None:
 			return None
 		if self.length > 10000: strval += u'...'
-		return (u'"%s"' % strval.replace("\0", "\\0")) + self.get_suffix()
+		return (u'"%s"' % escape_string(strval)) + self.get_suffix()
 
 class DCStringPrinter(DBaseStringPrinter):
 	"print D string values"
@@ -315,10 +317,10 @@ class DAssocArrayPrinter(BaseSynthProvider):
 		bucketsize = self.bucket_size()
 
 		for i in range(length):
-			yield bucketptr.AddressOf().CreateChildAtOffset("bucketptr", i * bucketsize, self.voidPtr)
+			yield bucketptr.CreateChildAtOffset("bucketptr", i * bucketsize, self.voidPtr).AddressOf()
 
 	def bucket_filled(self, bucket):
-		hashval = bucket.Cast(self.lookup_type("size_t").GetPointerType()).Dereference().unsigned
+		hashval = bucket.CreateChildAtOffset("hashval", 0, self.lookup_type("size_t")).unsigned
 		HASH_FILLED_MARK = 1 << (8 * self.lookup_type("size_t").size) - 1
 		return hashval & HASH_FILLED_MARK != 0
 
@@ -330,7 +332,6 @@ class DAssocArrayPrinter(BaseSynthProvider):
 
 	def child_iter(self):
 		for bucket in self.buckets():
-			log.error("bucket: %s", bucket.addr)
 			if self.bucket_filled(bucket):
 				yield self.bucket_entry(bucket)
 
@@ -345,7 +346,6 @@ class DAssocArrayPrinter(BaseSynthProvider):
 			remaining = index
 			for child in self.child_iter():
 				if remaining == 0:
-					log.error("addr: %s", child.addr)
 					key = child.CreateChildAtOffset('[%s]' % index, 0, self.key_type)
 					return child.CreateChildAtOffset(str(key.summary), self.valoff(), self.value_type)
 				else:
@@ -372,6 +372,33 @@ class DAssocArrayPrinter(BaseSynthProvider):
 
 	def get_summary(self):
 		return get_map_summary(self)
+
+control_character_finder = re.compile(r'[\x00-\x1F]')
+escaped_characters = re.compile(r'[\\"]')
+def escape_string(str):
+	global string_encoding
+	global control_character_finder
+	global escaped_characters
+
+	if string_encoding == "remove":
+		return control_character_finder.sub('', str)
+	elif string_encoding == "unicode":
+		return control_character_finder.sub(lambda m: chr(ord(m.group()) + 0x2400), str)
+	elif string_encoding == "escape":
+		special_encodings = {
+			0x00: r'\0',
+			0x07: r'\a',
+			0x08: r'\b',
+			0x09: r'\t',
+			0x0C: r'\f',
+			0x0A: r'\n',
+			0x0B: r'\v',
+			0x0D: r'\r',
+		}
+		str = escaped_characters.sub(r'\\\g<0>', str)
+		return control_character_finder.sub(lambda m: special_encodings.get(ord(m.group()), r'\x%02x' % ord(m.group())), str)
+	else:
+		return str
 
 def parse_d_type(target, type):
 	return target.FindFirstType(type)
