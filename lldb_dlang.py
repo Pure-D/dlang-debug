@@ -85,6 +85,9 @@ def sequence_summary(array, clipsize=32, maxsize=100, shownames=False):
 	s = ''
 	for i in range(array.num_children()):
 		if i > 0: s += ', '
+		if len(s) >= clipsize:
+			s += '...'
+			break
 		child = array.get_child_at_index(i)
 		if child == None:
 			s += '<None>'
@@ -92,11 +95,8 @@ def sequence_summary(array, clipsize=32, maxsize=100, shownames=False):
 			if shownames:
 				s += child.name + ' = '
 			s += get_obj_summary(child)
-		if len(s) >= clipsize:
-			s += ', ...'
-			break
 	if len(s) > maxsize:
-		return "..."
+		return '...'
 	return s
 
 def get_array_summary(valobj):
