@@ -341,13 +341,23 @@ class DAssocArrayPrinter(BaseSynthProvider):
 	def has_children(self):
 		return self.num_children() > 0 #self.ptr.unsigned != 0
 
+	def get_key_name(self, child, index):
+		key = child.CreateChildAtOffset('[%s]' % index, 0, self.key_type)
+		summary = get_obj_summary(key)
+		if key.error.Fail():
+			summary = '[(void*) %s]' % str(child.addr)
+		return summary
+
 	def get_child_at_index(self, index):
 		try:
 			remaining = index
 			for child in self.child_iter():
 				if remaining == 0:
-					key = child.CreateChildAtOffset('[%s]' % index, 0, self.key_type)
-					return child.CreateChildAtOffset(str(key.summary), self.valoff(), self.value_type)
+					summary = self.get_key_name(child, index)
+					if self.value_type.name == "void":
+						return child.CreateChildAtOffset(summary, self.valoff(), self.voidPtr).AddressOf().Cast(self.voidPtr)
+					else:
+						return child.CreateChildAtOffset(summary, self.valoff(), self.value_type)
 				else:
 					remaining -= 1
 
@@ -361,8 +371,7 @@ class DAssocArrayPrinter(BaseSynthProvider):
 		try:
 			index = 0
 			for child in self.child_iter():
-				key = child.CreateChildAtOffset('[%s]' % index, 0, self.key_type)
-				if str(key.summary) == name:
+				if self.get_key_name(child, index) == name:
 					return index
 				index += 1
 			return None

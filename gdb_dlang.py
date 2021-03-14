@@ -186,7 +186,7 @@ class DAssocArrayPrinter(object):
 
 def reinterpret_aa_key(value, type):
 	if type.name == 'void':
-		return '(void*)' + str(value.cast(type.pointer()))
+		return '[(void*) %s]' % str(value.cast(type.pointer()))
 	else:
 		return str(value.cast(type.pointer()).dereference())
 
