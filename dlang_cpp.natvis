@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="utf-8"?>
+<AutoVisualizer xmlns="http://schemas.microsoft.com/vstudio/debugger/natvis/2010">
+    <Type Name="slice&lt;*&gt;">
+        <AlternativeType Name="dArray" />
+        <!-- dmd dwarf array types -->
+        <AlternativeType Name="_Array_bool" />
+        <AlternativeType Name="_Array_short" />
+        <AlternativeType Name="_Array_enum" />
+        <AlternativeType Name="_Array_int" />
+        <AlternativeType Name="_Array_unsigned" />
+        <AlternativeType Name="_Array_long" />
+        <AlternativeType Name="_Array_cent" />
+        <AlternativeType Name="_Array_ucent" />
+        <AlternativeType Name="_Array_float" />
+        <AlternativeType Name="_Array_double" />
+        <AlternativeType Name="_Array_nullptr_t" />
+        <AlternativeType Name="_Array_*" />
+        <AlternativeType Name="_Array_&amp;" />
+        <AlternativeType Name="_Array_void" />
+        <AlternativeType Name="_Array_noreturn" />
+        <AlternativeType Name="_Array_struct" />
+        <AlternativeType Name="_Array_array" />
+        <AlternativeType Name="_Array___near &amp;" />
+        <AlternativeType Name="_Array___ss *" />
+        <AlternativeType Name="_Array___cs *" />
+        <AlternativeType Name="_Array___far16 *" />
+        <AlternativeType Name="_Array___far *" />
+        <AlternativeType Name="_Array___huge *" />
+        <AlternativeType Name="_Array___handle *" />
+        <AlternativeType Name="_Array___immutable *" />
+        <AlternativeType Name="_Array___shared *" />
+        <AlternativeType Name="_Array___restrict *" />
+        <AlternativeType Name="_Array___fg *" />
+        <AlternativeType Name="_Array_memptr" />
+        <AlternativeType Name="_Array_ident" />
+        <AlternativeType Name="_Array_template" />
+        <AlternativeType Name="_Array_vtshape" />
+
+        <DisplayString Condition="ptr == 0 &amp;&amp; length == 0">null</DisplayString>
+        <DisplayString Condition="length == 0">[ length=0 ]</DisplayString>
+        <DisplayString Condition="length == 1">[ length=1, {*ptr,na} ]</DisplayString>
+        <DisplayString>[ length={length}, ... ]</DisplayString>
+        <Expand>
+            <Item Name="[length]" ExcludeView="simple">length</Item>
+            <ArrayItems>
+                <Size>length</Size>
+                <ValuePointer>ptr</ValuePointer>
+            </ArrayItems>
+        </Expand>
+    </Type>
+    <Type Name="_Array_char">
+        <AlternativeType Name="slice&lt;char&gt;" />
+        <AlternativeType Name="_Array_char8_t" />
+        <!-- LDC types -->
+        <AlternativeType Name="string" />
+
+        <DisplayString>{ptr,[length]s8}</DisplayString>
+        <StringView>ptr</StringView>
+    </Type>
+    <Type Name="_Array_wchar_t">
+        <AlternativeType Name="slice&lt;wchar&gt;" />
+        <AlternativeType Name="_Array_char16_t" />
+        <!-- LDC types -->
+        <AlternativeType Name="wstring" />
+
+        <DisplayString>{ptr,[length]su}</DisplayString>
+        <StringView>ptr</StringView>
+    </Type>
+    <Type Name="_Array_dchar">
+        <AlternativeType Name="slice&lt;dchar&gt;" />
+        <!-- LDC types -->
+        <AlternativeType Name="dstring" />
+
+        <DisplayString>{ptr,[length]s32}</DisplayString>
+        <StringView>ptr</StringView>
+    </Type>
+    <Type Name="associative_array&lt;*, *&gt;">
+        <AlternativeType Name="_AArray_bool_bool" />
+        <AlternativeType Name="_AArray_bool_short" />
+        <AlternativeType Name="_AArray_bool_enum" />
+        <AlternativeType Name="_AArray_bool_int" />
+        <AlternativeType Name="_AArray_bool_unsigned" />
+        <AlternativeType Name="_AArray_bool_long" />
+        <AlternativeType Name="_AArray_bool_cent" />
+        <AlternativeType Name="_AArray_bool_ucent" />
+        <AlternativeType Name="_AArray_bool_float" />
+        <AlternativeType Name="_AArray_bool_double" />
+        <AlternativeType Name="_AArray_short_bool" />
+        <AlternativeType Name="_AArray_short_short" />
+        <AlternativeType Name="_AArray_short_enum" />
+        <AlternativeType Name="_AArray_short_int" />
+        <AlternativeType Name="_AArray_short_unsigned" />
+        <AlternativeType Name="_AArray_short_long" />
+        <AlternativeType Name="_AArray_short_cent" />
+        <AlternativeType Name="_AArray_short_ucent" />
+        <AlternativeType Name="_AArray_short_float" />
+        <AlternativeType Name="_AArray_short_double" />
+        <AlternativeType Name="_AArray_enum_bool" />
+        <AlternativeType Name="_AArray_enum_short" />
+        <AlternativeType Name="_AArray_enum_enum" />
+        <AlternativeType Name="_AArray_enum_int" />
+        <AlternativeType Name="_AArray_enum_unsigned" />
+        <AlternativeType Name="_AArray_enum_long" />
+        <AlternativeType Name="_AArray_enum_cent" />
+        <AlternativeType Name="_AArray_enum_ucent" />
+        <AlternativeType Name="_AArray_enum_float" />
+        <AlternativeType Name="_AArray_enum_double" />
+        <AlternativeType Name="_AArray_int_bool" />
+        <AlternativeType Name="_AArray_int_short" />
+        <AlternativeType Name="_AArray_int_enum" />
+        <AlternativeType Name="_AArray_int_int" />
+        <AlternativeType Name="_AArray_int_unsigned" />
+        <AlternativeType Name="_AArray_int_long" />
+        <AlternativeType Name="_AArray_int_cent" />
+        <AlternativeType Name="_AArray_int_ucent" />
+        <AlternativeType Name="_AArray_int_float" />
+        <AlternativeType Name="_AArray_int_double" />
+        <AlternativeType Name="_AArray_unsigned_bool" />
+        <AlternativeType Name="_AArray_unsigned_short" />
+        <AlternativeType Name="_AArray_unsigned_enum" />
+        <AlternativeType Name="_AArray_unsigned_int" />
+        <AlternativeType Name="_AArray_unsigned_unsigned" />
+        <AlternativeType Name="_AArray_unsigned_long" />
+        <AlternativeType Name="_AArray_unsigned_cent" />
+        <AlternativeType Name="_AArray_unsigned_ucent" />
+        <AlternativeType Name="_AArray_unsigned_float" />
+        <AlternativeType Name="_AArray_unsigned_double" />
+        <AlternativeType Name="_AArray_long_bool" />
+        <AlternativeType Name="_AArray_long_short" />
+        <AlternativeType Name="_AArray_long_enum" />
+        <AlternativeType Name="_AArray_long_int" />
+        <AlternativeType Name="_AArray_long_unsigned" />
+        <AlternativeType Name="_AArray_long_long" />
+        <AlternativeType Name="_AArray_long_cent" />
+        <AlternativeType Name="_AArray_long_ucent" />
+        <AlternativeType Name="_AArray_long_float" />
+        <AlternativeType Name="_AArray_long_double" />
+        <AlternativeType Name="_AArray_cent_bool" />
+        <AlternativeType Name="_AArray_cent_short" />
+        <AlternativeType Name="_AArray_cent_enum" />
+        <AlternativeType Name="_AArray_cent_int" />
+        <AlternativeType Name="_AArray_cent_unsigned" />
+        <AlternativeType Name="_AArray_cent_long" />
+        <AlternativeType Name="_AArray_cent_cent" />
+        <AlternativeType Name="_AArray_cent_ucent" />
+        <AlternativeType Name="_AArray_cent_float" />
+        <AlternativeType Name="_AArray_cent_double" />
+        <AlternativeType Name="_AArray_ucent_bool" />
+        <AlternativeType Name="_AArray_ucent_short" />
+        <AlternativeType Name="_AArray_ucent_enum" />
+        <AlternativeType Name="_AArray_ucent_int" />
+        <AlternativeType Name="_AArray_ucent_unsigned" />
+        <AlternativeType Name="_AArray_ucent_long" />
+        <AlternativeType Name="_AArray_ucent_cent" />
+        <AlternativeType Name="_AArray_ucent_ucent" />
+        <AlternativeType Name="_AArray_ucent_float" />
+        <AlternativeType Name="_AArray_ucent_double" />
+        <AlternativeType Name="_AArray_float_bool" />
+        <AlternativeType Name="_AArray_float_short" />
+        <AlternativeType Name="_AArray_float_enum" />
+        <AlternativeType Name="_AArray_float_int" />
+        <AlternativeType Name="_AArray_float_unsigned" />
+        <AlternativeType Name="_AArray_float_long" />
+        <AlternativeType Name="_AArray_float_cent" />
+        <AlternativeType Name="_AArray_float_ucent" />
+        <AlternativeType Name="_AArray_float_float" />
+        <AlternativeType Name="_AArray_float_double" />
+        <AlternativeType Name="_AArray_double_bool" />
+        <AlternativeType Name="_AArray_double_short" />
+        <AlternativeType Name="_AArray_double_enum" />
+        <AlternativeType Name="_AArray_double_int" />
+        <AlternativeType Name="_AArray_double_unsigned" />
+        <AlternativeType Name="_AArray_double_long" />
+        <AlternativeType Name="_AArray_double_cent" />
+        <AlternativeType Name="_AArray_double_ucent" />
+        <AlternativeType Name="_AArray_double_float" />
+        <AlternativeType Name="_AArray_double_double" />
+
+        <DisplayString>{{ length={*(int*)((size_t*)ptr+2) - *((int*)((size_t*)ptr+2)+1)} }}</DisplayString>
+        <Expand>
+            <CustomListItems MaxItemsPerView="5000" ExcludeView="Test">
+                <Variable Name="sizet_size" InitialValue="sizeof((void*)ptr)" />
+                <Variable Name="iBucket" InitialValue="(size_t)-1" />
+                <Variable Name="bucketCount" InitialValue="*(size_t*)ptr" />
+                <Variable Name="bucketPtrPtr" InitialValue="*((char**)ptr+1)" />
+                <Variable Name="valoff" InitialValue="*(int*)((char*)ptr+sizet_size*3+sizeof(int)*5)" />
+                <Variable Name="bucketEntry" InitialValue="(void*)nullptr" />
+                <Variable Name="bucketSize" InitialValue="sizet_size*2" />
+                <Variable Name="FILL_MASK" InitialValue="((size_t)1 &lt;&lt; (8 * sizet_size - 1))"/>
+
+                <Loop>
+                    <Exec>iBucket++</Exec>
+                    <Break Condition="iBucket &gt;= bucketCount" />
+                    <Exec>bucketEntry = *(void**)bucketPtrPtr</Exec>
+                    <If Condition="(*(size_t*)&amp;bucketEntry &amp; FILL_MASK) != 0">
+                        <Exec>bucketEntry = *((char**)bucketPtrPtr+1)</Exec>
+                        <Item Name="[{*(__key_t*)bucketEntry,na}]">*(__val_t*)((char*)bucketEntry+valoff)</Item>
+                    </If>
+                    <Exec>bucketPtrPtr += bucketSize</Exec>
+                </Loop>
+            </CustomListItems>
+        </Expand>
+    </Type>
+</AutoVisualizer>

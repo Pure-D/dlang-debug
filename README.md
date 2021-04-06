@@ -1,6 +1,6 @@
 # dlang-debug
 
-Pretty printers for various dlang types for GDB and LLDB.
+Pretty printers for various dlang types for GDB, LLDB and VSDBG.
 
 TODO:
 - GDB
@@ -16,7 +16,18 @@ TODO:
   - [ ] Test on all OS
     - [x] Linux
     - [ ] OSX
-    - [ ] Windows
+    - [x] ~~Windows~~ -> broken with LDC
+  - [x] Associative Arrays
+  - [x] Arrays
+  - [x] Strings
+  - [ ] phobos types (tbd)
+- VSDBG (NatVis)
+  - [x] Windows Support only
+  - [ ] Test with all Compilers
+    - [x] LDC `-gc`
+    - [x] ~~LDC `-g`~~ -> broken, not implementable
+    - [ ] DMD `-gc`
+    - [ ] DMD `-g`
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
@@ -27,6 +38,25 @@ Due to the pretty printing API, LLDB offers better type displays.
 Boilerplate code for LLDB taken from [vscode-lldb](https://github.com/vadimcn/vscode-lldb).
 
 ## Usage
+
+### Automatic with any installed debugger
+
+**VSCode with [webfreak.code-d](https://marketplace.visualstudio.com/items?itemName=webfreak.code-d)**
+
+(recommends extensions C/C++ on Windows or CodeLLDB on other platforms installed)
+
+```js
+{
+	"name": "Debug Program",
+	"request": "launch",
+	"type": "code-d",
+	"program": "${command:dubTarget}",
+	"cwd": "${workspaceFolder}",
+	"dubBuild": true // optional, automatic builds
+}
+```
+
+code-d has these debug configurations bundled since version 0.23.0 and automatically detects the recommended settings for the current platform with the installed debug extensions.
 
 ### GDB
 
@@ -104,3 +134,23 @@ command script import "/path/to/lldb_dlang.py"
 }
 ```
 
+### NatVis with VSDBG
+
+**Visual Studio:**
+
+Put the natvis file in your workspace, it will be loaded automatically and just work.
+
+**VSCode Debug Extension Configurations:**
+
+**C/C++ (ms-vscode.cpptools)**
+
+```json
+{
+	"name": "Debug Program",
+	"request": "launch",
+	"type": "cppvsdbg",
+	"program": "${workspaceFolder}/programname.exe",
+	"cwd": "${workspaceFolder}",
+	"visualizerFile": "C:\\Path\\To\\dlang.natvis"
+}
+```
