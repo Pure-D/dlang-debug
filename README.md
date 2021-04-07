@@ -4,30 +4,55 @@ Pretty printers for various dlang types for GDB, LLDB and VSDBG.
 
 TODO:
 - GDB
-  - [ ] Test on all OS
-    - [x] Linux
-    - [ ] OSX
-    - [ ] Windows
+  - [ ] Test & make work on all OS
+    - [x] Linux x64
+    	- [x] DMD
+    	- [ ] DMD `-gc`
+    	- [x] LDC
+    	- [ ] LDC `-gc`
+    - [ ] OSX x64
+    	- [ ] DMD
+    	- [ ] DMD `-gc`
+    	- [ ] LDC
+    	- [ ] LDC `-gc`
+    - [ ] Windows x64
+    	- [ ] DMD
+    	- [ ] DMD `-gc`
+    	- [ ] LDC
+    	- [ ] LDC `-gc`
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings (bug: doesn't respect length, stops at null characters)
   - [ ] phobos types (tbd)
 - LLDB
-  - [ ] Test on all OS
-    - [x] Linux
-    - [ ] OSX
-    - [x] ~~Windows~~ -> broken with LDC
+  - [ ] Test & make work on all OS
+    - [x] Linux x64
+    	- [x] DMD
+    	- [ ] DMD `-gc`
+    	- [x] LDC
+    	- [ ] LDC `-gc`
+    - [ ] OSX x64
+    	- [ ] DMD
+    	- [ ] DMD `-gc`
+    	- [ ] LDC
+    	- [ ] LDC `-gc`
+    - [ ] Windows x64
+    	- [ ] DMD
+    	- [ ] DMD `-gc`
+    	- [x] ~~LDC~~ -> broken
+    	- [ ] LDC `-gc`
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
   - [ ] phobos types (tbd)
 - VSDBG (NatVis)
   - [x] Windows Support only
-  - [ ] Test with all Compilers
-    - [x] LDC `-gc`
-    - [x] ~~LDC `-g`~~ -> broken, not implementable
-    - [ ] DMD `-gc`
-    - [ ] DMD `-g`
+  - [ ] Make work with all Compilers
+    - [ ] Windows x64
+      - [x] ~~LDC~~ -> broken, not implementable
+      - [x] LDC `-gc`
+      - [ ] DMD
+      - [ ] DMD `-gc`
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
