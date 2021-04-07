@@ -36,11 +36,11 @@ TODO:
     	- [ ] DMD `-gc`
     	- [ ] LDC
     	- [ ] LDC `-gc`
-    - [ ] Windows x64
-    	- [ ] DMD
-    	- [ ] DMD `-gc`
-    	- [x] ~~LDC~~ -> broken
-    	- [ ] LDC `-gc`
+    - [x] ~~Windows x64~~ broken (LLDB not working with D Windows binaries)
+    	- [x] ~~DMD~~ -> LLDB broken
+    	- [x] ~~DMD `-gc`~~ -> LLDB broken
+    	- [x] ~~LDC~~ -> LLDB broken
+    	- [x] ~~LDC `-gc`~~ -> LLDB broken
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
@@ -51,8 +51,8 @@ TODO:
     - [ ] Windows x64
       - [x] ~~LDC~~ -> broken, not implementable
       - [x] LDC `-gc`
-      - [ ] DMD
-      - [ ] DMD `-gc`
+      - [x] ~~DMD~~ -> broken, not implementable
+      - [x] ~~DMD `-gc`~~ -> broken, does not seem to work
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
