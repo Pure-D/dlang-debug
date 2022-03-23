@@ -255,6 +255,9 @@ class DAssocArrayPrinter(BaseSynthProvider):
 		else:
 			split_loc = tag.find('_')
 
+		self.key_type = self.voidPtr
+		self.value_type = self.voidPtr
+
 		if split_loc != -1:
 			# however some types end with _t, so we need to offset the splitter by 2
 			if tag[split_loc:].startswith('_t_'):

@@ -185,7 +185,9 @@ class DAssocArrayPrinter(object):
 				yield reinterpret_aa_key(entry, self.key_type), reinterpret_aa_val(entry + off, self.value_type)
 
 def reinterpret_aa_key(value, type):
-	if type.name == 'void':
+	if type is None:
+		return '(?) %s' % str(value.cast(gdb.lookup_type("void").pointer()))
+	elif type.name == 'void':
 		return '[(void*) %s]' % str(value.cast(type.pointer()))
 	else:
 		return str(value.cast(type.pointer()).dereference())
