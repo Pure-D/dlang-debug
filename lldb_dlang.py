@@ -177,7 +177,7 @@ class DArrayPrinter(BaseSynthProvider):
 			raise
 
 	def get_summary(self):
-		return get_array_summary(self)
+		return '&' + get_array_summary(self)
 
 class DBaseStringPrinter(DArrayPrinter):
 	def get_child_at_index(self, index):
