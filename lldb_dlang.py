@@ -27,6 +27,8 @@ def __lldb_init_module(debugger, dict):
 
 	attach_synthetic_to_type(DAssocArrayPrinter, r'^_AArray_|[^0-9\[][^\[]*\]$', True)
 
+	attach_synthetic_to_type(DSArrayPrinter, r'\[[0-9]+\]$', True)
+
 	attach_synthetic_to_type(DArrayPrinter, r'^_Array_|\[\]$', True)
 
 	attach_synthetic_to_type(DCStringPrinter, r'^_Array_char$|^_Array_char8_t$|^string$|^(const|immutable)?\(?char\)?\s*\[\]$', True)
@@ -123,6 +125,17 @@ class BaseSynthProvider(object):
 		return None
 	def get_summary(self):
 		return None
+
+class DSArrayPrinter(BaseSynthProvider):
+	"print D static arrays"
+	def num_children(self):
+		return self.valobj.GetNumChildren()
+
+	def get_child_at_index(self, index):
+		return self.valobj.GetChildAtIndex(index)
+
+	def get_summary(self):
+			return get_array_summary(self)
 
 class DArrayPrinter(BaseSynthProvider):
 	"print D arrays"
