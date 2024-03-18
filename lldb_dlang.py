@@ -27,11 +27,15 @@ def __lldb_init_module(debugger, dict):
 
 	attach_synthetic_to_type(DAssocArrayPrinter, r'^_AArray_|[^0-9\[][^\[]*\]$', True)
 
+	attach_synthetic_to_type(DSArrayPrinter, r'\[[0-9]+\]$', True)
+
 	attach_synthetic_to_type(DArrayPrinter, r'^_Array_|\[\]$', True)
 
 	attach_synthetic_to_type(DCStringPrinter, r'^_Array_char$|^_Array_char8_t$|^string$|^(const|immutable)?\(?char\)?\s*\[\]$', True)
 	attach_synthetic_to_type(DWStringPrinter, r'^_Array_wchar_t$|^_Array_char16_t$|^wstring$|^(const|immutable)?\(?wchar\)?\s*\[\]$', True)
 	attach_synthetic_to_type(DDStringPrinter, r'^_Array_dchar$|^dstring$|^(const|immutable)?\(?dchar\)?\s*\[\]$', True)
+	
+	attach_synthetic_to_type(DObjectPrinter, r' \*$', True)
 
 def attach_synthetic_to_type(synth_class, type_name, is_regex=False):
 	global module, d_category
@@ -124,6 +128,17 @@ class BaseSynthProvider(object):
 	def get_summary(self):
 		return None
 
+class DSArrayPrinter(BaseSynthProvider):
+	"print D static arrays"
+	def num_children(self):
+		return self.valobj.GetNumChildren()
+
+	def get_child_at_index(self, index):
+		return self.valobj.GetChildAtIndex(index)
+
+	def get_summary(self):
+			return get_array_summary(self)
+
 class DArrayPrinter(BaseSynthProvider):
 	"print D arrays"
 
@@ -164,7 +179,7 @@ class DArrayPrinter(BaseSynthProvider):
 			raise
 
 	def get_summary(self):
-		return get_array_summary(self)
+		return '&' + get_array_summary(self)
 
 class DBaseStringPrinter(DArrayPrinter):
 	def get_child_at_index(self, index):
@@ -384,6 +399,144 @@ class DAssocArrayPrinter(BaseSynthProvider):
 
 	def get_summary(self):
 		return get_map_summary(self)
+
+
+def is_ptr_to_class(valobj):
+	''' type of dereferenced value is a:
+			class if directbaseclass > 0
+			interface if bytesize == 0 (using DMD, LDC uses 8 bytes)
+			primitivie otherwise
+	'''
+	return bool(valobj.Dereference().GetType().GetNumberOfDirectBaseClasses() > 0)
+
+class DObjectPrinter(BaseSynthProvider):
+	def initialize(self):
+		pass
+
+	def update(self):
+		try:
+			self._update()
+		except Exception as e:
+			log.error('%s', e)
+			raise
+
+	def _update(self):
+		type_name = self.valobj.GetTypeName()
+		if type_name in ['unsigned long *', 'void *'] or type_name.endswith('**'):
+			return
+
+		if self.valobj.GetName().startswith('*'):
+			# stop recursion when dereferencing values
+			return
+	
+		if is_ptr_to_class(self.valobj):
+			# print('should be class:',self.valobj.GetTypeName())
+			valobj = self.get_dynamic_value_from_address(self.valobj.GetValueAsUnsigned())
+			if valobj is None:
+				log.debug("couldn't get dynamic value from type %s", self.valobj.GetTypeName())
+				return
+
+			self.valobj = valobj
+			self.set_type_name(self.valobj)
+			return
+
+		# print('is not a class:',self.valobj.GetTypeName())
+		interface_type = self.valobj.GetType().GetPointeeType()
+		if interface_type.GetByteSize() not in [0,8]:
+			# interfaces size in dmd:0, ldc:8. Should filter out some false positives.
+			return
+
+		target = self.valobj.target
+		
+		# object of any interface I (technically I* b/c reference semantics) can be cast into Interface***
+
+		address = self.valobj.Cast(target.FindFirstType("void").GetPointerType().GetPointerType().GetPointerType())
+		interface_struct_address = address.Dereference().Dereference().GetValueAsUnsigned()
+
+		# Interface has field 'offset' at relative location 0x18
+		offset_address = interface_struct_address + 0x18
+		offset = self.valobj.CreateValueFromAddress("offset_ptr", offset_address, target.FindFirstType("ulong").GetPointerType())
+
+
+		# offset is relative location between interface and object pointer
+		# object pointer can be cast into TypeInfo_Class**
+		# TypeInfo_Class has field 'name' at relative location 0x20
+		object_address = address.GetValueAsUnsigned() - offset.GetValueAsUnsigned()
+
+		dynamic_value= self.get_dynamic_value_from_address(object_address)
+		if dynamic_value:
+			# if not then value was not an interface to begin with
+			self.valobj = dynamic_value	
+
+		self.set_type_name(self.valobj)
+
+	def set_type_name(self, value):
+		self.type_name = self.valobj.GetTypeName()
+		if '!' in self.type_name:
+			# template type names have a constant Suffix, i.e. mymodule.MyGenericType!int.Template
+			self.type_name = self.type_name[0:-9]
+
+
+
+	def get_dynamic_value_from_address(self, address):
+		target: lldb.SBTarget = self.valobj.GetTarget()
+		void_ptr_type:lldb.SBType = target.FindFirstType("void").GetPointerType()
+
+		typeinfo_class = self.valobj.CreateValueFromAddress("obj_ptr", address,void_ptr_type.GetPointerType())
+		# TypeInfo_Class has field 'name' at relative location 0x20
+		tic_address = typeinfo_class.Dereference().GetValueAsUnsigned() 
+		if not tic_address:
+			return
+		name_address = tic_address + 0x20
+		name_value = self.valobj.CreateValueFromAddress("class_name", name_address, target.FindFirstType("string"))
+		name = (name_value.GetSummary() or '').strip('"')
+		if not name:
+			return
+		
+		tpObject = target.FindFirstType(name)
+		if not tpObject and '.' not in name:
+			# dmd: 'object' module is implicitly imported
+			tpObject = target.FindFirstType('object.' + name)
+		
+		if not tpObject and '.' in name:
+			# ldc: doesn't find types prefixed with e.g. 'object.'
+			last_idx = name.rfind('.')
+			tpObject = target.FindFirstType(name[last_idx+1:])
+
+		if not tpObject:
+			# TODO: LDC does not publish types unless they are used as static type
+			# print('could not find type', name)
+			log.error('could not find type %s', name)
+			return
+
+		return self.valobj.CreateValueFromAddress('', address, tpObject)
+	
+	def num_children(self):
+		return self.valobj.GetNumChildren()
+
+	def has_children(self):
+		return self.valobj.GetNumChildren() > 0
+
+	def get_child_at_index(self, index):
+		return self.valobj.GetChildAtIndex(index)
+
+	def get_child_index(self, name):
+		return self.valobj.GetIndexOfChildWithName(name)
+
+	def get_summary(self):
+		if getattr(self, 'type_name', ''):
+			return self.type_name
+
+		try:
+			tpVoidPtr = self.valobj.target.FindFirstType("void").GetPointerType()
+			addr= self.valobj.Cast(tpVoidPtr).GetValueAsUnsigned()
+			if not addr:
+				return '%s(null)' % self.valobj.GetTypeName()
+			return '%s(0x%016x)' % (self.valobj.GetTypeName(), addr)
+		except Exception as e:
+			log.error('%s', e)	
+			raise	
+
 
 control_character_finder = re.compile(r'[\x00-\x1F]')
 escaped_characters = re.compile(r'[\\"]')
