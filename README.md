@@ -3,23 +3,24 @@
 Pretty printers for various dlang types for GDB, LLDB and VSDBG.
 
 TODO:
+
 - GDB
   - [ ] Test & make work on all OS
     - [x] Linux x64
-    	- [x] DMD
-    	- [ ] DMD `-gc`
-    	- [x] LDC
-    	- [ ] LDC `-gc`
+      - [x] DMD
+      - [ ] DMD `-gc`
+      - [x] LDC
+      - [ ] LDC `-gc`
     - [ ] OSX x64
-    	- [ ] DMD
-    	- [ ] DMD `-gc`
-    	- [ ] LDC
-    	- [ ] LDC `-gc`
+      - [ ] DMD
+      - [ ] DMD `-gc`
+      - [ ] LDC
+      - [ ] LDC `-gc`
     - [ ] Windows x64
-    	- [ ] DMD
-    	- [ ] DMD `-gc`
-    	- [ ] LDC
-    	- [ ] LDC `-gc`
+      - [ ] DMD
+      - [ ] DMD `-gc`
+      - [ ] LDC
+      - [ ] LDC `-gc`
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings (bug: doesn't respect length, stops at null characters)
@@ -27,20 +28,20 @@ TODO:
 - LLDB
   - [ ] Test & make work on all OS
     - [x] Linux x64
-    	- [x] DMD
-    	- [ ] DMD `-gc`
-    	- [x] LDC
-    	- [ ] LDC `-gc`
+      - [x] DMD
+      - [ ] DMD `-gc`
+      - [x] LDC
+      - [ ] LDC `-gc`
     - [ ] OSX x64
-    	- [ ] DMD
-    	- [ ] DMD `-gc`
-    	- [ ] LDC
-    	- [ ] LDC `-gc`
+      - [ ] DMD
+      - [ ] DMD `-gc`
+      - [ ] LDC
+      - [ ] LDC `-gc`
     - [x] ~~Windows x64~~ broken (LLDB not working with D Windows binaries)
-    	- [x] ~~DMD~~ -> LLDB broken
-    	- [x] ~~DMD `-gc`~~ -> LLDB broken
-    	- [x] ~~LDC~~ -> LLDB broken
-    	- [x] ~~LDC `-gc`~~ -> LLDB broken
+      - [x] ~~DMD~~ -> LLDB broken
+      - [x] ~~DMD `-gc`~~ -> LLDB broken
+      - [x] ~~LDC~~ -> LLDB broken
+      - [x] ~~LDC `-gc`~~ -> LLDB broken
   - [x] Associative Arrays
   - [x] Arrays
   - [x] Strings
@@ -129,9 +130,7 @@ MI Commands (for use with extensions):
 	"type": "gdb",
 	"target": "./programname",
 	"cwd": "${workspaceFolder}",
-	"autorun": [
-		"source /path/to/gdb_dlang.py"
-	],
+	"autorun": ["source /path/to/gdb_dlang.py"],
 	"valuesFormatting": "prettyPrinters"
 }
 ```
